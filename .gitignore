@@ -1,0 +1,74 @@
+# === STM32 HAL/CubeMX Project .gitignore ===
+# 此文件用于Git版本控制，忽略由编译器、IDE和STM32CubeMX生成的临时文件和构建产物。
+# 适用于 STM32CubeIDE, Keil MDK, IAR EWARM 等主流开发环境。
+
+# --- 通用构建产物 (General Build Artifacts) ---
+*.o
+*.obj
+*.elf
+*.axf
+*.out
+*.bin
+*.hex
+*.srec
+*.mot
+*.map
+*.lst
+*.sbr
+*.d
+*.pch
+*.a
+*.lib
+*.sfr
+*.su
+*.bak
+
+# --- STM32CubeMX 生成的备份文件 ---
+*.ioc.bck
+
+# --- STM32CubeIDE (Eclipse-based) ---
+# 构建输出目录
+Debug/
+Release/
+
+# 项目配置文件 (通常不需要加入版本控制，团队成员可自行生成)
+.project
+.cproject
+.settings/
+*.launch
+
+# --- Keil MDK (uVision) ---
+# 构建输出目录
+MDK-ARM/
+Objects/
+Listings/
+
+# 用户个人配置 (如窗口布局、断点等，应忽略)
+*.uvoptx
+*.uvgui.*
+*.uvstate
+
+# RTE (Run-Time Environment) 备份和临时文件
+RTE/
+*.scvd
+
+# 调试器日志文件
+JLinkLog.txt
+*.log
+Target\ Support\ Files/
+
+# --- IAR Embedded Workbench (EWARM) ---
+# 构建输出目录 (根据项目设置可能不同)
+Debug/
+Release/
+settings/
+*.dep
+
+# 用户个人配置 (调试器、编辑器设置)
+*.ewd
+*.ewp.bak
+*.eww.bak
+
+# --- VS Code (如果使用VS Code作为编辑器) ---
+# VS Code 本地配置目录
+.vscode/
