@@ -17,10 +17,10 @@ typedef struct {
 	int8_t primary_mcu_state;
 }PrimaryMcuContext;
 
-void LEDTest_Init(void);
-void LEDTest_ON(void);
-void LEDTest_OFF(void);
-void LEDTest_Turn(void);
+//void LEDTest_Init(void);
+//void LEDTest_ON(void);
+//void LEDTest_OFF(void);
+//void LEDTest_Turn(void);
 
 
 #endif

@@ -23,7 +23,9 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include <stdio.h>
+#include <string.h> 
 #include "LEDTest.h"
+
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -33,7 +35,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define RX_BUFFER_SIZE		100
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -49,7 +51,9 @@ DMA_HandleTypeDef hdma_usart1_tx;
 osThreadId defaultTaskHandle;
 osThreadId led_testHandle;
 /* USER CODE BEGIN PV */
-
+static char dma_rx_buffer[100];
+volatile uint16_t rx_len;
+volatile _Bool data_ready_flag;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -101,7 +105,8 @@ int main(void)
   MX_DMA_Init();
   MX_USART1_UART_Init();
   /* USER CODE BEGIN 2 */
-
+  HAL_UARTEx_ReceiveToIdle_DMA(&huart1, (uint8_t *)dma_rx_buffer, RX_BUFFER_SIZE);
+  __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);		   // 手动关闭DMA_IT_HT中断	
   /* USER CODE END 2 */
 
   /* USER CODE BEGIN RTOS_MUTEX */
@@ -290,7 +295,23 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef * huart, uint16_t Size)
+{
+    if(huart->Instance == USART1)
+    {
+        if (Size <= RX_BUFFER_SIZE)
+        {
+            HAL_UARTEx_ReceiveToIdle_DMA(&huart1, dma_rx_buffer, RX_BUFFER_SIZE); // 接收完毕后重启
+            HAL_UART_Transmit(&huart1, dma_rx_buffer, Size, 0xffff);         // 将接收到的数据再发出
+            __HAL_DMA_DISABLE_IT(&hdma_usart1_rx, DMA_IT_HT);		   // 手动关闭DMA_IT_HT中断
+            memset(dma_rx_buffer, 0, RX_BUFFER_SIZE);							   // 清除接收缓存
+        }
+        else  // 接收数据长度大于RX_BUFFER_SIZE，错误处理
+        {
+            
+        }
+    }
+}
 /* USER CODE END 4 */
 
 /* USER CODE BEGIN Header_StartDefaultTask */
@@ -335,9 +356,9 @@ void StartTask02(void const * argument)
 		  num = 0;
 	  
 		pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6);	  
-		len = sprintf(uart_rbuf, "%d%d", num, pin_state);
+		len = sprintf(uart_rbuf, "%d%d, timestamp:%lu", num, pin_state, xTaskGetTickCount());
 		if (len > 0)
-			HAL_UART_Transmit(&huart1, (uint8_t *)uart_rbuf, len, 10);
+		// HAL_UART_Transmit(&huart1, (uint8_t *)uart_rbuf, len, 10);
 	  
 	  osDelay(500);
   }
