@@ -20,7 +20,6 @@
 #include "main.h"
 #include "cmsis_os.h"
 #include "dma.h"
-#include "iwdg.h"
 #include "usart.h"
 #include "wwdg.h"
 #include "gpio.h"
@@ -99,7 +98,6 @@ int main(void)
   MX_GPIO_Init();
   MX_DMA_Init();
   MX_USART1_UART_Init();
-  MX_IWDG_Init();
   MX_WWDG_Init();
   /* USER CODE BEGIN 2 */
   HeartDetectInit((uint8_t*) dma_rx_buffer, RX_BUFFER_SIZE);
@@ -136,11 +134,10 @@ void SystemClock_Config(void)
   /** Initializes the RCC Oscillators according to the specified parameters
   * in the RCC_OscInitTypeDef structure.
   */
-  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_LSI|RCC_OSCILLATORTYPE_HSE;
+  RCC_OscInitStruct.OscillatorType = RCC_OSCILLATORTYPE_HSE;
   RCC_OscInitStruct.HSEState = RCC_HSE_ON;
   RCC_OscInitStruct.HSEPredivValue = RCC_HSE_PREDIV_DIV1;
   RCC_OscInitStruct.HSIState = RCC_HSI_ON;
-  RCC_OscInitStruct.LSIState = RCC_LSI_ON;
   RCC_OscInitStruct.PLL.PLLState = RCC_PLL_ON;
   RCC_OscInitStruct.PLL.PLLSource = RCC_PLLSOURCE_HSE;
   RCC_OscInitStruct.PLL.PLLMUL = RCC_PLL_MUL9;
@@ -186,14 +183,14 @@ void HAL_UARTEx_RxEventCallback(UART_HandleTypeDef * huart, uint16_t Size)
 
 void HAL_WWDG_EarlyWakeupCallback(WWDG_HandleTypeDef *hwwdg)
 {
-  static int i = 0;
+	static int i = 0;
 	i++;
-	if(i>100)//每隔4秒左右LED翻转
-	{
+	if(i > 12) {	//每隔0.48秒左右LED翻转
 		i=0;
-		LEDTest_ON();
+		LEDTest_Turn();
 	}
-  HAL_WWDG_Refresh(hwwdg);      //喂狗
+	
+   HAL_WWDG_Refresh(hwwdg);      //喂狗
 }
 /* USER CODE END 4 */
 

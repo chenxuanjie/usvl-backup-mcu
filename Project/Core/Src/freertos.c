@@ -25,7 +25,10 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include <stdio.h>
+#include <string.h> 
+#include "LEDTest.h"
+#include "wwdg.h"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -35,7 +38,8 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+extern WWDG_HandleTypeDef hwwdg;
+extern int wwdg_i;
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -45,7 +49,7 @@
 
 /* Private variables ---------------------------------------------------------*/
 /* USER CODE BEGIN Variables */
-
+extern UART_HandleTypeDef huart1;
 /* USER CODE END Variables */
 osThreadId defaultTaskHandle;
 osThreadId led_testHandle;
@@ -145,10 +149,24 @@ void StartDefaultTask(void const * argument)
 void StartTask02(void const * argument)
 {
   /* USER CODE BEGIN StartTask02 */
+	uint8_t pin_state = 0;
+	uint32_t len = 0;
+	static int num = 0;
+	char uart_rbuf[100];
   /* Infinite loop */
   for(;;)
   {
-    osDelay(500);
+//		LEDTest_Turn();
+	  num ++;
+	  if (num >= 100)
+		  num = 0;
+	  
+		pin_state = HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_6);	  
+		len = sprintf(uart_rbuf, "%d%d, timestamp:%lu, wwdg_i:%d\n", num, pin_state, xTaskGetTickCount(), wwdg_i);
+		if (len > 0)
+		 HAL_UART_Transmit(&huart1, (uint8_t *)uart_rbuf, len, 10);
+	  
+	  osDelay(500);
   }
   /* USER CODE END StartTask02 */
 }
