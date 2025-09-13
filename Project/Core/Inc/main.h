@@ -61,7 +61,10 @@ void Error_Handler(void);
 #define LED1_GPIO_Port GPIOC
 
 /* USER CODE BEGIN Private defines */
-
+// typedef enum {
+//   SUCCESS = 0,
+//   FAILED,
+// } FuncState;
 /* USER CODE END Private defines */
 
 #ifdef __cplusplus

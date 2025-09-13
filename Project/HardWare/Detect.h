@@ -17,10 +17,11 @@ typedef struct {
 	int8_t primary_mcu_state;
 }PrimaryMcuContext;
 
-//void LEDTest_Init(void);
+int8_t HeartDetectInit(uint8_t* pData, uint16_t Size);
+int8_t HeartDetectReflashIT(uint8_t* pData, uint16_t Size);
 //void LEDTest_ON(void);
 //void LEDTest_OFF(void);
 //void LEDTest_Turn(void);
 
 
-#endif
+#endif	// DUALMCU_HARDWARE_DETECT_H_
